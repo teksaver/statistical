@@ -1,0 +1,62 @@
+---
+title: 'Project part 1: simulation exercise'
+author: "Sylvain Tenier"
+date: "16 novembre 2015"
+output: html_document
+---
+
+# Overview
+
+In this simulation project, we investigate the exponential distribution in R and compare it with the Central Limit Theorem. For this, we present the distribution of averages of 40 exponentials using 0.2 as the value of lambda for all of the simulations. 
+
+# Simulations
+
+In this section, we present the R code for running 1000 simulations. The code is explained through R comments
+
+```{r}
+# Set the number of simulations to 1000 
+nbsim <- 1000 
+# Set the experiment values
+lambda = 0.2
+n = 40
+# Create a function that returns the mean of 40 values using the exponential distribution 
+simfunc <- function(x) mean(rexp(n, lambda)) 
+# Make the experiment reproducible with a seed
+set.seed(1979)
+# Create a vector with the results
+sim <- sapply(1:nbsim, simfunc)
+# Display the first and last 5 values of the vector
+head(sim)
+tail(sim)
+
+```
+
+# Sample Mean versus Theoretical Mean
+
+The theoretical mean for the exponentional distribution is $1/\lambda$. In our experiment $\lambda=0.2$ so we expect a value of 5.
+
+The sample mean is calculated using the following R code
+
+```{r}
+sm <- mean(sim)
+sm
+```
+We notice that `r sm` is very close to the expected value of `r 1/lambda`
+
+
+In this section, we highlight the means we are comparing. 
+ 
+# Sample Variance versus Theoretical Variance
+
+According to the CLT, the expected variance is $\frac{(1/\lambda)^2}{n}$. In our case $\lambda=0.2$ and $n=40$ so we should get $\frac{(1/0.2)^2}{40}$ which gives `r (1/lambda)^2/n`.
+
+The sample variance is obtained by squaring the result of the call to R's sd() function
+```{r}
+sv <- (sd(sim))^2
+sv
+```
+We get a sample variance (`r sv`) that is close to the expected value (`r (1/lambda)^2/n`) of the variance.
+
+
+# Distribution
+In this section, we show that the distribution is approximately normal. 
