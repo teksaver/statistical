@@ -59,7 +59,19 @@ We get a sample variance (`r sv`) that is close to the expected value (`r (1/lam
 
 
 # Distribution
-The following code generates a density histogram and the normal distribution with the expected mean and standard deviation.
+First we show that the distribution of 1000 random uniforms is by itself not normal.
+```{r}
+library(ggplot2)
+df<-data.frame(dist<-rexp(1000, lambda))
+ggplot(data=df,aes(x = dist)) + 
+      geom_histogram(aes(y = ..density..),binwidth = 0.50,colour="black",fill="chartreuse1")
+```
+
+However, when we draw
+
+1. a density histogram for the 1000 simulated sample means
+2. the normal distribution with the expected mean and standard deviation.
+
 ```{r}
 library(ggplot2)
 df<-data.frame(sim)
@@ -72,3 +84,6 @@ ggplot(data=df,aes(x = sim)) +
 ```
 
 This figure demonstrates that the sample distribution of the means approximatively follows the normal distribution. The mean, displayed as a red dotted line, is as expected at a value close to 5.
+
+
+```
