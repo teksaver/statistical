@@ -59,4 +59,16 @@ We get a sample variance (`r sv`) that is close to the expected value (`r (1/lam
 
 
 # Distribution
-In this section, we show that the distribution is approximately normal. 
+The following code generates a density histogram and the normal distribution with the expected mean and standard deviation.
+```{r}
+library(ggplot2)
+df<-data.frame(sim)
+ggplot(data=df,aes(x = sim)) + 
+    geom_histogram(aes(y = ..density..),binwidth = 0.20,colour="black",fill="chartreuse1")+
+    stat_function(fun = dnorm,  size=2, arg = list(mean = 5, sd = sd(sim)))+
+    geom_vline(aes(xintercept=mean(sim, na.rm=T)),   # Ignore NA values for mean
+               color="red", linetype="dashed", size=1)
+
+```
+
+This figure demonstrates that the sample distribution of the means approximatively follows the normal distribution. The mean, displayed as a red dotted line, is as expected at a value close to 5.
