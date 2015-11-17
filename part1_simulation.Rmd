@@ -1,7 +1,6 @@
 ---
 title: 'Project part 1: simulation exercise'
 author: "Sylvain Tenier"
-date: "16 novembre 2015"
 output: pdf_document
 ---
 
@@ -76,7 +75,6 @@ However, when we draw
 2. the normal distribution with the expected mean and standard deviation.
 
 ```{r}
-library(ggplot2)
 df<-data.frame(sim)
 ggplot(data=df,aes(x = sim)) + 
     geom_histogram(aes(y = ..density..),binwidth = 0.20,colour="black",fill="chartreuse1")+
