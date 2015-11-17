@@ -2,12 +2,14 @@
 title: 'Project part 1: simulation exercise'
 author: "Sylvain Tenier"
 date: "16 novembre 2015"
-output: html_document
+output: pdf_document
 ---
 
 # Overview
 
-In this simulation project, we investigate the exponential distribution in R and compare it with the Central Limit Theorem. For this, we present the distribution of averages of 40 exponentials using 0.2 as the value of lambda for all of the simulations. 
+In this simulation project, we investigate the exponential distribution in R and compare it with the Central Limit Theorem. For this, we compare the distribution of 1000 exponentials with 1000 averages of 40 exponentials. We use 0.2 as the value of lambda for all of the simulations.
+
+This report is written by applying the "Reproducible Research" principle of presenting the code along with the results. We show that although the exponential distribution is not normal, the distribution of its averages is normal. 
 
 # Simulations
 
@@ -84,6 +86,3 @@ ggplot(data=df,aes(x = sim)) +
 ```
 
 This figure demonstrates that the sample distribution of the means approximatively follows the normal distribution. The mean, displayed as a red dotted line, is as expected at a value close to 5.
-
-
-```
