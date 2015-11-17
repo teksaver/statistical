@@ -13,7 +13,7 @@ This report is written by applying the "Reproducible Research" principle of pres
 
 # Simulations
 
-In this section, we present the R code for running 1000 simulations. The code is explained through R comments
+In this section, we present the R code for running 1000 simulations of the mean of 40 values from the exponential distrution. The code is explained through R comments
 
 ```{r}
 # Set the number of simulations to 1000 
@@ -62,11 +62,12 @@ We get a sample variance (`r sv`) that is close to the expected value (`r (1/lam
 
 # Distribution
 First we show that the distribution of 1000 random uniforms is by itself not normal.
-```{r}
+```{r, fig.height=3.5}
 library(ggplot2)
 df<-data.frame(dist<-rexp(1000, lambda))
 ggplot(data=df,aes(x = dist)) + 
-      geom_histogram(aes(y = ..density..),binwidth = 0.50,colour="black",fill="chartreuse1")
+  geom_histogram(aes(y = ..density..),binwidth = 0.50,colour="black",fill="chartreuse1")+
+  labs(title="Distribution of 1000 random uniforms", x="random value of the uniform distribution")
 ```
 
 However, when we draw
@@ -81,8 +82,14 @@ ggplot(data=df,aes(x = sim)) +
     geom_histogram(aes(y = ..density..),binwidth = 0.20,colour="black",fill="chartreuse1")+
     stat_function(fun = dnorm,  size=2, arg = list(mean = 5, sd = sd(sim)))+
     geom_vline(aes(xintercept=mean(sim, na.rm=T)),   # Ignore NA values for mean
-               color="red", linetype="dashed", size=1)
+               color="red", linetype="dashed", size=1)+
+    labs(title="Density histogram of 1000 sample means", x="mean value with n=40")
+
 
 ```
 
 This figure demonstrates that the sample distribution of the means approximatively follows the normal distribution. The mean, displayed as a red dotted line, is as expected at a value close to 5.
+
+# Conclusion
+ 
+ The large number theory stipulates that with a large-enough number of samples, the distribution of the means of a non-normal distribution is normal. This simulation study demonstrates that this is the case for the exponential distribution with the distribution of the mean of 40 values.
