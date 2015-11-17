@@ -1,0 +1,30 @@
+---
+title: 'Project part 2: tooth growth analysis'
+author: "Sylvain Tenier"
+output: pdf_document
+---
+# Overview
+
+# Exploratory Data Analysis
+
+First we display the summary of the tooth growth data
+```{r}
+summary(ToothGrowth)
+```
+
+
+```{r, fig.height=3}
+library(ggplot2)
+ggplot(data=ToothGrowth, aes(x=factor(dose),y=len, color=supp))+
+  facet_wrap(~ supp )+
+  geom_boxplot()
+```
+
+```{r, fig.height=3}
+ggplot(data=ToothGrowth, aes(x=supp,y=len, color=dose))+
+  facet_wrap(~ dose )+
+  geom_boxplot()
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
