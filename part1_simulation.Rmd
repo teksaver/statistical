@@ -43,9 +43,6 @@ sm <- mean(sim)
 sm
 ```
 We notice that `r sm` is very close to the expected value of `r 1/lambda`
-
-
-In this section, we highlight the means we are comparing. 
  
 # Sample Variance versus Theoretical Variance
 
@@ -66,7 +63,8 @@ library(ggplot2)
 df<-data.frame(dist<-rexp(1000, lambda))
 ggplot(data=df,aes(x = dist)) + 
   geom_histogram(aes(y = ..density..),binwidth = 0.50,colour="black",fill="chartreuse1")+
-  labs(title="Distribution of 1000 random uniforms", x="random value of the uniform distribution")
+  labs(title="Distribution of 1000 random uniforms", 
+       x="random value of the uniform distribution")
 ```
 
 However, when we draw

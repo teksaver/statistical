@@ -3,28 +3,102 @@ title: 'Project part 2: tooth growth analysis'
 author: "Sylvain Tenier"
 output: pdf_document
 ---
+
 # Overview
+
+The ToothGrowth dataset describes the evolution in the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs, where each animal received one of three dose levels of vitamin C by one of two delivery methods. The complete description is provided at [the R documentation site](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html).
 
 # Exploratory Data Analysis
 
-First we display the summary of the tooth growth data
+The dataset consists of a dataframe containing 60 observations composed of 3 attributes :
 ```{r}
-summary(ToothGrowth)
+str(ToothGrowth)
 ```
+- the Tooth length, described as a numeric variable named *len*, 
+- the Supplement type, a factor named *supp*. The levels of the factor are either *VC* or *OJ*,
+- the Dose in milligrams/day expressed as a numeric variable named *dose*.
 
+The documentation tells us that the tooth length is the output. For our Exploratory Data Analysis, we generate a boxplot for each dose and supplement type.
 
 ```{r, fig.height=3}
 library(ggplot2)
 ggplot(data=ToothGrowth, aes(x=factor(dose),y=len, color=supp))+
-  facet_wrap(~ supp )+
-  geom_boxplot()
+  facet_wrap(~ supp )+ geom_boxplot() +
+    labs(title="Tooth length for a given dose, for each supplement type", 
+         x="Dose given", y="Length of tooth")
 ```
 
-```{r, fig.height=3}
-ggplot(data=ToothGrowth, aes(x=supp,y=len, color=dose))+
-  facet_wrap(~ dose )+
-  geom_boxplot()
+This figure shows that whatever the supplement type, a higher dose yields a higher growth. We can also see that the *OJ* supplement type is more efficient for small doses, but that the *OJ* and *VC* supplements type have similar mean when the highest dose (2.0) is used.
 
+# Summary of data
+
+We group the data by dose and supplement type and calculate the minimum value, the mean, the maximum value and the standard deviation for each subgroup.
+
+```{r}
+library(knitr)
+suppressPackageStartupMessages(library(dplyr, quietly=TRUE))
+tgsummary <- ToothGrowth %>%
+     group_by(dose,supp) %>%
+     summarise(count=n(), min=min(len), mean=mean(len), max=max(len), sd=sd(len))
+kable(tgsummary)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+We can see that there are 10 measurements for each subgroup. The mean confirms that increasing the dose increases the result, and that for small doses the *OJ* is more efficient, although the maximum value is reached with the *VC* supplement at the highest dose. 
+
+
+# Confidence interval
+
+## Test Assumptions
+
+- the variance between each group is unequal,
+- the groups are independant.
+
+## Calculations
+
+We must now calculate the confidence intervals to expand on the validity of those preliminary results. We will make the calculations for all measurements, and then for each dose.
+
+```{r}
+#calculate using t.test() for all, 0.5, 1.0 and 2.0 
+testall<- t.test(ToothGrowth[ToothGrowth$supp=='OJ',]$len,
+                 ToothGrowth[ToothGrowth$supp=='VC',]$len, 
+                 var.equal = FALSE)
+test05<- t.test(ToothGrowth[(ToothGrowth$supp=='OJ')&(ToothGrowth$dose==0.5),]$len,
+       ToothGrowth[(ToothGrowth$supp=='VC')&(ToothGrowth$dose==0.5),]$len,
+       var.equal = FALSE)
+test10 <- t.test(ToothGrowth[(ToothGrowth$supp=='OJ')&(ToothGrowth$dose==1),]$len,
+       ToothGrowth[(ToothGrowth$supp=='VC')&(ToothGrowth$dose==1),]$len,
+       var.equal = FALSE)
+test20 <- t.test(ToothGrowth[(ToothGrowth$supp=='OJ')&(ToothGrowth$dose==2),]$len,
+       ToothGrowth[(ToothGrowth$supp=='VC')&(ToothGrowth$dose==2),]$len,
+       var.equal = FALSE)
+#create dataframe with results
+dfall <- data.frame(row.names='all doses',pvalue=testall$p.value,
+                    confinf=testall$conf.int[1],confsup=testall$conf.int[2],
+                    OJmean=testall$estimate[1],VCmean=testall$estimate[2])
+df05 <- data.frame(row.names='O.5 dose',pvalue=test05$p.value,
+                   confinf=test05$conf.int[1],confsup=test05$conf.int[2],
+                   OJmean=test05$estimate[1],VCmean=test05$estimate[2])
+df10 <- data.frame(row.names='1.0 dose',pvalue=test10$p.value,
+                   confinf=test10$conf.int[1],confsup=test10$conf.int[2],
+                   OJmean=test10$estimate[1],VCmean=test10$estimate[2])
+df20 <- data.frame(row.names='2.0 dose',pvalue=test20$p.value,
+                   confinf=test20$conf.int[1],confsup=test20$conf.int[2],
+                   OJmean=test20$estimate[1],VCmean=test20$estimate[2])
+#display table with results
+kable(total <- rbind(dfall, df05, df10, df20) )
+```
+
+The t tests are carried with the $H_0$ hypothesis :
+
+``` OJ and VL supplement types generate the same growth in teeth length```
+
+## Conclusions
+
+We can see that :
+
+- the confidence interval for all results contains the 0 value,
+- the confidence interval for small doses (0.5 and 1.0) does not contain the 0 value and have a small p value,
+- the confidence interval for the highest dose (2.0) contains 0 and have a huge p value.
+
+We can thus reject the $H_0$ hypothesis for the small doses, but not for the 2.0 and all doses.
+
